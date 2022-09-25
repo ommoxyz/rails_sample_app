@@ -11,10 +11,19 @@
     <!--header-->
     <%= render 'layouts/header' %>
     <div class="container">
+      
+      <!--flash-->
+      <% flash.each do |message_type, message| %>
+        <%= content_tag(:div, message, class: "alert alert-#{message_type}") %>
+      <% end %>
+      
       <%= yield %>
       
       <!--footer-->
       <%= render 'layouts/footer' %>
+      
+      <!--debug-->
+      <%= debug(params) if Rails.env.development? %>
     </div>
   </body>
 </html>
