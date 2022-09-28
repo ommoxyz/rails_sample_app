@@ -53,4 +53,10 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
   
   config.web_console.whitelisted_ips = '106.155.0.45' #追記
+  
+  # メールのプレビュー設定
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :test
+  host = 'rails-tutorial-mhartl.c9users.io'
+  config.action_mailer.default_url_options = { host: host, protocol: 'https' }
 end

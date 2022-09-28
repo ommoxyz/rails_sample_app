@@ -10,21 +10,21 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      log_in @user
-      flash[:success] = "Welcome to the Sample App!"
-      # /users/id へリダイレクト
-      redirect_to @user
+      @user.send_activation_email
+      flash[:info] = "Please check your email to activate your account."
+      redirect_to root_url
     else
       render 'new'
     end
   end
   
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.where(activated: true).paginate(page: params[:page])
   end
   
   def show
     @user = User.find(params[:id])
+    redirect_to root_url and return unless @user.activated
   end
   
   def edit
@@ -53,13 +53,19 @@ class UsersController < ApplicationController
             .permit(:name, :email, :password, :password_confirmation)
     end
     
-    # before_action
+    # ログイン済みユーザーか確認
     def logged_in_user
       unless logged_in?
         store_location
         flash[:danger] = "Please log in."
         redirect_to login_url
       end
+    end
+    
+    # 正しいユーザーかどうか確認
+    def correct_user
+      @user = User.find(params[:id])
+      redirect_to(root_url) unless @user == current_user
     end
     
     # 管理者かどうか確認
